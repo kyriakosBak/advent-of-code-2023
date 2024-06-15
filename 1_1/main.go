@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	filePath := "data.txt"
+	filePath := "input.txt"
 
 	// Scan file line by line
 	f, err := os.Open(filePath)

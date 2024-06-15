@@ -6,11 +6,12 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"unicode"
 )
 
 func main() {
-	filePath := "data.txt"
+	filePath := "input.txt"
 
 	// Scan file line by line
 	f, err := os.Open(filePath)
@@ -23,34 +24,53 @@ func main() {
 	sum := 0
 	for scanner.Scan() {
 		// Extract number and add to sum
-		sum += stringToNumber(scanner.Text())
+		res, err := stringToNumber(scanner.Text())
+		if err != nil {
+			log.Fatal(err)
+		}
+		sum += res
 	}
 
 	// Sum
 	fmt.Println(sum)
 }
 
-func stringToNumber(line string) int {
+func stringToNumber(line string) (int, error) {
 	var runeArray [2]string
-	for _, rune := range line {
-		if unicode.IsDigit(rune) {
+	for i, char := range line {
+		if unicode.IsDigit(char) {
 			if runeArray[0] == "" {
-				runeArray[0] = string(rune)
-				runeArray[1] = string(rune)
+				runeArray[0] = string(char)
+			}
+			runeArray[1] = string(char)
+		} else {
+			number := checkTextNumberExistsAtTheStartOfText(line[i:])
+			if number == -1 {
 				continue
 			}
-			runeArray[1] = string(rune)
+			if runeArray[0] == "" {
+				runeArray[0] = strconv.Itoa(number)
+			}
+			runeArray[1] = strconv.Itoa(number)
 		}
 	}
 	intResult, err := strconv.Atoi(runeArray[0] + runeArray[1])
 	if err != nil {
-		log.Fatal(err)
+		return -1, err
 	}
-	return intResult
+	return intResult, nil
 }
 
-func checkTextNumberExists(test string) (int, int) {
-
+// Returns -1 if it cannot find a number at index 0.
+func checkTextNumberExistsAtTheStartOfText(text string) int {
+	numbers := []string{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
+	for _, num := range numbers {
+		index := strings.Index(text, num)
+		if index == 0 {
+			return textToNumberMap(num)
+		}
+	}
+	return -1
 }
 
 func textToNumberMap(text string) int {

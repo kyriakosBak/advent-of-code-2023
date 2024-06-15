@@ -22,7 +22,10 @@ func TestLineParsing(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := stringToNumber(tt.input)
+			result, err := stringToNumber(tt.input)
+			if err != nil {
+				t.Error(err)
+			}
 			if result != tt.want {
 				t.Errorf("got %d want %d", result, tt.want)
 			}
@@ -36,12 +39,13 @@ func TestTextNumberExists(t *testing.T) {
 		input string
 		want  int
 	}{
-		{"one should return 1,0", "one", 1, 0},
+		{"one should return 1", "one", 1},
+		{"aone should return -1", "aone", -1},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := stringToNumber(tt.input)
+			result := checkTextNumberExistsAtTheStartOfText(tt.input)
 			if result != tt.want {
 				t.Errorf("got %d want %d", result, tt.want)
 			}
