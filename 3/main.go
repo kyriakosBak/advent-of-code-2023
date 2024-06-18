@@ -32,31 +32,45 @@ func main() {
 func getSum(matrix [][]rune) int {
 	// Go through each row and character
 	sum := 0
-	hasSymbol := false
 	var currentNumber []rune
 	for i, line := range matrix {
+		hasSymbol := false
 		for j, char := range line {
-			if !unicode.IsDigit(char) {
-				// if there is an adjacent symbol and we have recorded a number
-				// add it to our sum
-				if hasSymbol && len(currentNumber) > 0 {
-					convertedNumber, err := strconv.Atoi(string(currentNumber))
-					if err != nil {
-						log.Fatal(err)
-					}
-					sum += convertedNumber
+			if unicode.IsDigit(char) {
+				currentNumber = append(currentNumber, char)
+				if hasAdjacentSymbol(matrix, i, j) {
+					hasSymbol = true
 				}
-				currentNumber = nil
 				continue
 			}
-			// If it's a digit, check all adjacents matrix nodes for a symbol
-			currentNumber = append(currentNumber, char)
-			if hasAdjacentSymbol(matrix, i, j) {
-				hasSymbol = true
+			// If not digit, check if it has symbol and add it to sum
+			if hasSymbol {
+				fmt.Println("adding number %d", getNumber(currentNumber))
+				sum += getNumber(currentNumber)
 			}
+			currentNumber = nil
+			hasSymbol = false
 		}
+		// Add number at end of line if it exists
+		if hasSymbol {
+			fmt.Println("adding number %d", getNumber(currentNumber))
+			sum += getNumber(currentNumber)
+		}
+		currentNumber = nil
 	}
 	return sum
+}
+
+func getNumber(number []rune) int {
+	if len(number) <= 0 {
+		return 0
+	}
+	convertedNumber, err := strconv.Atoi(string(number))
+	if err != nil {
+		fmt.Println(err)
+		return 0
+	}
+	return convertedNumber
 }
 
 func hasAdjacentSymbol(matrix [][]rune, currentRow int, currentCol int) bool {
@@ -69,7 +83,7 @@ func hasAdjacentSymbol(matrix [][]rune, currentRow int, currentCol int) bool {
 		newRow := currentRow + direction[0]
 		newCol := currentCol + direction[1]
 
-		if newRow < 0 || newRow >= len(matrix) || newCol < 0 || newCol > len(matrix[0]) {
+		if newRow < 0 || newRow >= len(matrix) || newCol < 0 || newCol >= len(matrix[0]) {
 			continue
 		}
 
