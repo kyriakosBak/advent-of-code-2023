@@ -25,26 +25,28 @@ func main() {
 }
 
 func getSeedLocation(seed int, dataMaps map[string]MapStruct) int {
-	from := "seed"
-	to := ""
 	sourceVal := seed
-	currentDataMap := MapStruct{}
-	result := 0
+	currentDataMap := MapStruct{to: "seed"}
 	for {
+		if len(dataMaps) == 0 {
+			break
+		}
+
 		// Find correct map
 		for _, val := range dataMaps {
-			if val.from == from {
+			if val.from == currentDataMap.to {
 				currentDataMap = val
+				break
 			}
 		}
 
-		result = getDestination(sourceVal, currentDataMap)
+		sourceVal = getDestination(sourceVal, currentDataMap)
 
-		if to == "location" {
+		if currentDataMap.to == "location" {
 			break
 		}
 	}
-	return result
+	return sourceVal
 }
 
 func getDestination(sourceVal int, currentDataMap MapStruct) int {
@@ -65,7 +67,7 @@ func getDestination(sourceVal int, currentDataMap MapStruct) int {
 			if err != nil {
 				log.Fatal(err)
 			}
-			result = lineDestStart + lineSourceOffset - 1
+			result = lineDestStart + (sourceVal - lineSourceStart)
 			break
 		}
 
@@ -108,7 +110,7 @@ func getAllMapsAndSeeds() ([]int, map[string]MapStruct) {
 		}
 
 		// If we find data, fill current map
-		if currentMapName != "" {
+		if currentMapName != "" && line != "" {
 			dataMaps[currentMapName] = MapStruct{
 				name:  currentMapName,
 				from:  strings.Split(currentMapName, "-")[0],
