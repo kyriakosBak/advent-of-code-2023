@@ -13,6 +13,18 @@ func TestGetSeedLocationReturnCorrectLocation(t *testing.T) {
 			"50 97 5",
 			"52 50 48",
 		},
+		lineInfos: []LineInfo{
+			{
+				DestinationStart: 50,
+				SourceStart:      97,
+				SourceOffset:     5,
+			},
+			{
+				DestinationStart: 52,
+				SourceStart:      50,
+				SourceOffset:     48,
+			},
+		},
 	}
 	mapStructA.from = "seed"
 	mapStructB := MapStruct{
@@ -20,6 +32,13 @@ func TestGetSeedLocationReturnCorrectLocation(t *testing.T) {
 		from:  mapStructA.to,
 		to:    "location",
 		lines: []string{"3 51 4"},
+		lineInfos: []LineInfo{
+			{
+				DestinationStart: 3,
+				SourceStart:      51,
+				SourceOffset:     4,
+			},
+		},
 	}
 
 	mapStruct := make(map[string]MapStruct)
@@ -64,6 +83,18 @@ func getDummyMapStruct() MapStruct {
 		lines: []string{
 			"50 98 2",
 			"52 50 48",
+		},
+		lineInfos: []LineInfo{
+			{
+				DestinationStart: 50,
+				SourceStart:      98,
+				SourceOffset:     2,
+			},
+			{
+				DestinationStart: 52,
+				SourceStart:      50,
+				SourceOffset:     48,
+			},
 		},
 	}
 }
