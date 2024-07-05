@@ -59,14 +59,19 @@ func readData() []Race {
 		}
 	}
 
-	races := []Race{}
 	totalTimeString := strings.Join(times, "")
 	totalTimeInt, err := strconv.Atoi(totalTimeString)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return races
+	totalDistanceString := strings.Join(distances, "")
+	totalDistanceInt, err := strconv.Atoi(totalDistanceString)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return []Race{{time: totalTimeInt, distance: totalDistanceInt}}
 }
 
 type Race struct {
