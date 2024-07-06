@@ -6,18 +6,18 @@ import (
 
 func TestSortHandsReturnCorrectOrder(t *testing.T) {
 	unsortedHands := []Hand{
-		{"ABCDE", 0},
-		{"AAAAB", 0},
-		{"AACDE", 0},
-		{"AAADE", 0},
+		{"A8342", 0},
+		{"AAAAK", 0},
+		{"AA234", 0},
+		{"AAA34", 0},
 	}
 	sortedHands := sortHands(unsortedHands)
 
 	expectedHands := []Hand{
-		{"AAAAB", 0},
-		{"AAADE", 0},
-		{"AACDE", 0},
-		{"ABCDE", 0},
+		{"A8342", 0},
+		{"AA234", 0},
+		{"AAA34", 0},
+		{"AAAAK", 0},
 	}
 
 	for i := range expectedHands {
