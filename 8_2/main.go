@@ -51,13 +51,11 @@ func main() {
 		}
 	}
 
-	nodeStepsToZ := make(map[string]int)
-	for _, node := range nodePaths {
-		nodeStepsToZ[node.Label] = -1
-	}
+	nodeStepsToZ := make([]int, len(nodePaths))
+	fmt.Println("Initial nodestepstoz", nodeStepsToZ)
 
 	counter := 0
-	for counter < 100000 {
+	for counter < 10000000 {
 		for _, m := range moves {
 			for i, node := range nodePaths {
 				if string(m) == "R" {
@@ -68,25 +66,30 @@ func main() {
 
 				counter++
 
-				if strings.HasSuffix(nodePaths[i].Label, "Z") {
-					if nodeStepsToZ[nodePaths[i].Label] == -1 {
-						nodeStepsToZ[nodePaths[i].Label] = counter
+				label := nodePaths[i].Label
+				if string(label[2]) == "Z" {
+					if nodeStepsToZ[i] == 0 {
+						fmt.Println("Updating", i, " ", nodeStepsToZ[i], " to", counter)
+						nodeStepsToZ[i] = counter
 					}
 
-					for _, steps := range nodeStepsToZ {
-						if steps == -1 {
-							continue
+					allPathsPresent := true
+					for _, step := range nodeStepsToZ {
+						if step == 0 {
+							allPathsPresent = false
+							break
 						}
 					}
 
-					steps := []int{}
-					for _, step := range nodeStepsToZ {
-						steps = append(steps, step)
+					if !allPathsPresent {
+						continue
 					}
-					lcm := LCM(steps[0], steps[1], steps[2:]...)
-					fmt.Println(lcm)
-					fmt.Println(nodeStepsToZ)
-					fmt.Println(counter)
+
+					result := nodeStepsToZ[0]
+					for step := range nodeStepsToZ[1:] {
+						result = lcm(result, step)
+					}
+					fmt.Println(result)
 					return
 				}
 			}
@@ -107,10 +110,10 @@ type Node struct {
 	RightNode string
 }
 
-// Copied lcm from: https://siongui.github.io/2017/06/03/go-find-lcm-by-gcd/
+// Partially copied lcm from: https://siongui.github.io/2017/06/03/go-find-lcm-by-gcd/
 
 // greatest common divisor (GCD) via Euclidean algorithm
-func GCD(a, b int) int {
+func gcd(a, b int) int {
 	for b != 0 {
 		t := b
 		b = a % b
@@ -119,13 +122,7 @@ func GCD(a, b int) int {
 	return a
 }
 
-// find Least Common Multiple (LCM) via GCD
-func LCM(a, b int, integers ...int) int {
-	result := a * b / GCD(a, b)
-
-	for i := 0; i < len(integers); i++ {
-		result = LCM(result, integers[i])
-	}
-
-	return result
+// find Least Common Multiple (lcm) via GCD
+func lcm(a int, b int) int {
+	return a * b / gcd(a, b)
 }
